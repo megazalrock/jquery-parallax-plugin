@@ -5,26 +5,33 @@
 <meta name="viewport" content="width=device-width" />
 <title>Insert title here</title>
 <link rel="stylesheet" href="../../jquery-loadprogress-plugin/jquery.loadprogress.css" />
-<style type="text/css">img{display:block}</style>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.js"></script>
+<style type="text/css">
+	img{
+		display:block
+	}
+	.ml40{
+		xmargin-left:0;
+		opacity:0.5;
+	}
+</style>
+<script type="text/javascript" src="../../js/jquery-1.8.2.js"></script>
 <script type="text/javascript" src="../../jquery-loadprogress-plugin/jquery.loadprogress.min.js"></script>
 <script type="text/javascript" src="../jquery.parallax.js"></script>
 <script type="text/javascript">
 $(function(){
-	$.parallax.init();
-	$('img')
-		.each(function(){
-			$(this)
-				.paraAnimate({
-					startProp:{
-						marginLeft:-300
-					},
-					endProp:{
-						marginLeft:0
-					},
-					easing:'easeInOutBounce'
-				});
-		})
+	$.parallax.init({
+		useLoadprogress:false
+	});
+	$('img').each(function(){
+		$(this)
+			.paraAnimate({
+				startProp:{
+					marginLeft:-300,
+					opacity:0
+				},
+				easing:'easeOutBounce'
+			});
+	});
 });
 </script>
 </head>
@@ -33,7 +40,7 @@ $(function(){
 <img src="../../dummyimage/300x300/dummy001.jpg" alt="" width="300" height="300" />
 <img src="../../dummyimage/300x300/dummy002.jpg" alt="" width="300" height="300" />
 <img src="../../dummyimage/300x300/dummy003.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy004.jpg" alt="" width="300" height="300" />
+<img class="ml40" src="../../dummyimage/300x300/dummy004.jpg" alt="" width="300" height="300" />
 <img src="../../dummyimage/300x300/dummy005.jpg" alt="" width="300" height="300" />
 <img src="../../dummyimage/300x300/dummy006.jpg" alt="" width="300" height="300" />
 <img src="../../dummyimage/300x300/dummy007.jpg" alt="" width="300" height="300" />

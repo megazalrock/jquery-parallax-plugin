@@ -9,24 +9,30 @@
 	$.extend({
 		parallax:{
 			progress:function(fnc){
-				$.loadprogress({
-					bodyOverflowFixTo:false
-				});
-				var loaded = 0;
-				$(window)
-					.one('load loadprogressEnd',function(e){
-						loaded += 1;
-						if(loaded >= 2){
-							setTimeout(function(){
-								fnc.call();
-							},1);
-						}
+				var _para = this;
+				if(_para._g.o.useLoadprogress){
+					$.loadprogress({
+						bodyOverflowFixTo:false
 					});
+					var loaded = 0;
+					$(window)
+						.one('load loadprogressEnd',function(e){
+							loaded += 1;
+							if(loaded >= 2){
+								setTimeout(function(){
+									fnc.call();
+								},1);
+							}
+						});
+				}else{
+					fnc.call()
+				}
 			},
 			init:function(_o){
 				var _para = this;
 				_o = _o || {};
 				var o = {
+					useLoadprogress:true,
 					onScroll:undefined,
 					keyScrollAmount:20,
 					scrollRate:0.8,
@@ -43,6 +49,7 @@
 					_para._g['bodyHeight'] = $('body').height();
 
 					function onWheel(e){
+						console.log(e);
 						var delta = e.detail || -e.wheelDelta;
 						//delta = (delta > 0)? 1 : (delta < 0)? -1 : 0;
 						addScrollDistance(delta * o.scrollRate);
@@ -105,25 +112,6 @@
 				for(var i=0; this.list[i]; i+=1){
 					var $_target = $(this.list[i]);
 					var p = $_target.data('_param');
-					if(p.startProp.height !== undefined && p.startProp.height === 'auto'){
-						p.startProp.height = $_target.height();
-					}
-					if(p.startProp.width !== undefined && p.startProp.width === 'auto'){
-						p.startProp.width = $_target.width();
-					}
-					if(p.start === 'auto'){
-						p.start = $_target.offset().top - $(window).height() + _para._g.o.startPosAutoOffset;
-					}
-					if(p.end === 'auto'){
-						p.end = $_target.offset().top  + _para._g.o.endPosAutoOffset;
-					}
-					if(p.animateStart !== undefined){
-						p.start = p.animateStart;
-					}
-					if(p.animateEnd !== undefined){
-						p.end = p.animateEnd;
-					}
-					
 					if(p.start > d){
 						$_target
 							.stop(true,true)
@@ -137,8 +125,9 @@
 						var easingPer = $.easing[p.easing]( per, per * 1000, 0, 1, 1000 );
 						var prop = {};
 						$.each(p.endProp,function(key){
+							p.startProp[key] = parseFloat(p.startProp[key]);
+							p.endProp[key] = parseFloat(p.endProp[key]);
 							prop[key] = (p.endProp[key] - p.startProp[key]) * easingPer + p.startProp[key];
-							
 						});
 						$_target.css(prop);
 					}
@@ -151,13 +140,58 @@
 	});
 	$.fn.extend({
 		paraAnimate:function(_para){
-			var para = {
+			var p = {
 				easing:'swing',
 				start:'auto',
 				end:'auto'
 			};
-			$.extend(para,_para);
-			$.parallax.list.push($(this).data('_param',para));
+			$.extend(p,_para);
+			var $_target = $(this);
+			p.startProp = p.startProp || {};
+			p.endProp = p.endProp || {};
+			if(p.startProp.height !== undefined && p.startProp.height === 'auto'){
+				p.startProp.height = $_target.height();
+			}
+			if(p.startProp.width !== undefined && p.startProp.width === 'auto'){
+				p.startProp.width = $_target.width();
+			}
+			if(p.endProp.height !== undefined && p.endProp.height === 'auto'){
+				p.endProp.height = $_target.height();
+			}
+			if(p.endProp.width !== undefined && p.endProp.width === 'auto'){
+				p.endProp.width = $_target.width();
+			}
+			if(p.start === 'auto'){
+				p.start = $_target.offset().top - $(window).height() + $.parallax._g.o.startPosAutoOffset;
+			}
+			if(p.end === 'auto'){
+				p.end = $_target.offset().top  + $.parallax._g.o.endPosAutoOffset;
+			}
+			if(p.animateStart !== undefined){
+				p.start = p.animateStart;
+			}
+			if(p.animateEnd !== undefined){
+				p.end = p.animateEnd;
+			}
+			$.each(p.startProp,function(key){
+				if(p.endProp[key] === undefined){
+					p.endProp[key] = parseFloat($_target.css(key));
+				}
+				if(typeof p.startProp[key] === 'string'){
+					$_target.css(key,p.startProp[key]);
+					p.startProp[key] = parseFloat($_target.css(key));
+				}
+			});
+			$.each(p.endProp,function(key){
+				if(p.startProp[key] === undefined){
+					p.startProp[key] = parseFloat($_target.css(key));
+				}
+				if(typeof p.endProp[key] === 'string'){
+					$_target.css(key,p.endProp[key]);
+					p.endProp[key] = parseFloat($_target.css(key));
+				}
+			});
+			$.parallax.list.push($(this).data('_param',p));
 			return this;
 		}
 	});
