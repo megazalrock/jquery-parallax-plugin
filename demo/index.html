@@ -6,57 +6,264 @@
 <title>Insert title here</title>
 <link rel="stylesheet" href="../../jquery-loadprogress-plugin/jquery.loadprogress.css" />
 <style type="text/css">
-	img{
-		display:block
-	}
-	.ml40{
-		xmargin-left:0;
-		opacity:0.5;
+	.box{
+		width:90%;
+		border:1px solid #CCC;
 	}
 </style>
 <script type="text/javascript" src="../../js/jquery-1.8.2.js"></script>
-<script type="text/javascript" src="../../jquery-loadprogress-plugin/jquery.loadprogress.min.js"></script>
+<script type="text/javascript" src="../../jquery-loadprogress-plugin/jquery.loadprogress.js"></script>
 <script type="text/javascript" src="../jquery.parallax.js"></script>
 <script type="text/javascript">
 $(function(){
 	$.parallax.init({
-		useLoadprogress:false
+		useLoadprogress:true,
+		showScrollBar:false
 	});
-	$('img').each(function(){
-		$(this)
+	$('body > div.box')
+		.eq(0)
 			.paraAnimate({
-				startProp:{
-					marginLeft:-300,
+				start:-100,
+				end:800,
+				endProp:{
+					marginTop:900,
 					opacity:0
 				},
-				easing:'easeOutBounce'
-			});
-	});
+				easing:'linear'
+			})
+		.end()
+	$.parallax.start();
+	
 });
 </script>
 </head>
 <body>
-<input type="text" val="" id="scrollDistance" />
-<img src="../../dummyimage/300x300/dummy001.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy002.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy003.jpg" alt="" width="300" height="300" />
-<img class="ml40" src="../../dummyimage/300x300/dummy004.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy005.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy006.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy007.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy008.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy009.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy010.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy011.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy012.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy013.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy014.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy015.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy016.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy017.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy018.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy019.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy020.jpg" alt="" width="300" height="300" />
-<img src="../../dummyimage/300x300/dummy021.jpg" alt="" width="300" height="300" />
+<div class="box">
+	<h1>jQuery Parallax Plugin</h1>
+	<h2>わりと簡単にパララックスさせられます。</h2>
+</div>
+<div class="box">
+	<h3>一番簡単な使い方</h3>
+</div>
+<div class="box">
+	<p>JavaScipt2つとCSSを1つ読み込んでください。</p>
+	<pre>
+	&lt;link rel="stylesheet" href="path/to/jquery.loadprogress.css" /&gt;
+	&lt;script type="text/javascript" src="path/to/jquery.loadprogress.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="path/to/jquery.parallax.js"&gt;&lt;/script&gt;
+	</pre>
+</div>
+<div class="box">
+	<p>動きは<pre>$('#hoge').css();</pre>で指定できるプロパティが指定できます。</p>
+</div>
+<div></div>
+<div class="box">
+	<p>使い方はまず</p>
+	<pre>
+		$.parallax.init();
+	</pre>
+	を呼び出します。オプションについては後述します。
+</div>
+<div class="box">
+	<p>次にスクロールに合わせてアニメーションさせたい要素で関数を呼びます。</p>
+	<pre>
+		$('#hoge')
+			.paraAnimate({
+				startProp:{
+					height:0
+				},
+				easing:'easeOutBounce'
+			});
+	</pre>
+</div>
+<div class="box">
+	<p>たったこれだけでアニメーションさせることができます！</p>
+</div>
+<div class="box">
+	<h3>詳細な使い方</h3>
+</div>
+<div class="box">
+	<p>$.parallax.init();に渡すことができるプロパティの一覧と解説です。</p>
+	<table>
+		<tr>
+			<th>useLoadprogress</th>
+			<td class="value">Boolean (true false)</td>
+			<td class="default">true</td>
+			<td class="desc">trueの場合、jquery-loadprogress-pluginを使用します。<br>
+			使用しな場合、haedタグ内で、jquery.loadprogress.jsとjquery.loadprogress.cssを読み込む必要はありません。<br>
+			また、（このHTMLのように）imgが一枚もない場合はfalseにしてください。（むしろ必要ないでしょう。）</td>
+		</tr>
+		<tr>
+			<th>onScroll</th>
+			<td class="value">Function</td>
+			<td class="default">なし（undefined）</td>
+			<td class="desc">関数を渡すと、スクロールイベント発生時に実行されます。</td>
+		</tr>
+		<tr>
+			<th>keyScrollAmountth>
+			<td class="value">Number</td>
+			<td class="default">20</td>
+			<td class="desc">キーボードの上下キーで移動する際のピクセル数です。</td>
+		</tr>
+		<tr>
+			<th>scrollRate</th>
+			<td class="value">Number</td>
+			<td class="default">0.8</td>
+			<td class="desc">マウスホイールでスクロールさせた時の移動量の調整用です。<br>
+			0に近づくほど遅くなり、1を超えると速くなります。
+			</td>
+		</tr>
+		<tr>
+			<th>startPosAutoOffset</th>
+			<td class="value">Number</td>
+			<td class="default">0</td>
+			<td class="desc">start:'auto'にした際のオフセット値です。</td>
+		</tr>
+		<tr>
+			<th>endPosAutoOffset</th>
+			<td class="value">Number</td>
+			<td class="default">-100</td>
+			<td class="desc">end:'auto'にした際のオフセット値です。</td>
+		</tr>
+		<tr>
+			<th>mode</th>
+			<td class="value">String ('scroll' 'page')</td>
+			<td class="default">'scroll'</td>
+			<td class="desc">未だ使われていません！</td>
+		</tr>
+	</table>
+</div>
+<div class="box">
+	<p>$('#hoge').paraAnimate()に渡す変数のプロパティ一覧です。</p>
+	<table>
+		<tr>
+			<th>start</th>
+			<td class="value">Number String ('auto')</td>
+			<td class="default">'auto'</td>
+			<td class="desc">
+				アニメーションを<strong>開始</strong>するピクセル数を設定してください。<br />
+				また'auto'を渡すと、アニメーション対象の要素の<br />
+				ドキュメントに対する位置+ウィンドウの高さ+前述のstartPosAutoOffsetの値がセットされます。
+			</td>
+		</tr>
+		<tr>
+			<th>end</th>
+			<td class="value">Number String ('auto')</td>
+			<td class="default">'auto'</td>
+			<td class="desc">
+				アニメーションを<strong>終了</strong>するピクセル数を設定してください。<br />
+				また'auto'を渡すと、アニメーション対象の要素の<br />
+				ドキュメントに対する位置+前述のendPosAutoOffsetの値がセットされます。
+			</td>
+		</tr>
+		<tr>
+			<th>easing</th>
+			<td class="value">String (ex 'swing')</td>
+			<td class="default">'swing'</td>
+			<td class="desc">$('#hoge').animate()などと同じイージング名を設定してください。<br />
+			jquery.easing.jsを利用することもできます！（その際は、このプラグインより前に読み込んでください。）
+			</td>
+		</tr>
+		<tr>
+			<th>startProp</th>
+			<td class="value">Object</td>
+			<td class="default">なし（undefined）</td>
+			<td class="desc">
+				アニメーション<strong>開始時</strong>のCSSプロパティを渡してください。<br />
+				省略することも可能です。省略した場合は、endPropに渡されたCSSプロパティを元に<br />
+				CSSで設定されている値が自動的にセットされます。<br />
+				$('#hoge').css()と同じようにCSSプロパティ名のオブジェクトを渡してください。
+				<pre>
+					$('#hoge').paraAnimate({
+						startProp:{
+							height:0,
+							opacity:0
+							marginLeft:-500
+						}
+					})
+				</pre>
+				また、heightとwidthに関しては明示的に'auto'を渡すこともできます。
+				この場合、アニメーション開始前に自動的に高さを取得します。
+			</td>
+		</tr>
+		<tr>
+			<th>endProp</th>
+			<td class="value">Object</td>
+			<td class="default">なし（undefined）</td>
+			<td class="desc">
+				アニメーション<strong>終了時</strong>のCSSプロパティを渡してください。<br />
+				省略することも可能です。省略した場合は、startPropに渡されたCSSプロパティを元に<br />
+				CSSで設定されている値が自動的にセットされます。<br />
+				$('#hoge').css()と同じようにCSSプロパティ名のオブジェクトを渡してください。
+				<pre>
+					$('#hoge').paraAnimate({
+						endProp:{
+							height:100,
+							opacity:1
+							marginLeft:0
+						}
+					})
+				</pre>
+				また、heightとwidthに関しては明示的に'auto'を渡すこともできます。
+				この場合、アニメーション開始前に自動的に高さを取得します。
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="box">
+	<p>全てのプロパティに記述した場合は以下のようになると思います。</p>
+	<pre>
+		$('#hoge')
+			.pareAnimate({
+				start:400,
+				end:600,
+				easing:'swing'
+				startProp:{
+					height:0,
+					opacity:0
+					marginLeft:-500
+				},
+				endProp:{
+					height:100,
+					opacity:1
+					marginLeft:0
+				}
+			});
+	</pre>
+	このばあい、#hogeは400pxの地点からheight
+</div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box">
+<img src="../../dummyimage/300x300/dummy001.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy002.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy003.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy004.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy005.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy006.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy007.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy008.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy009.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy010.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy011.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy012.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy013.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy014.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy015.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy016.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy017.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy018.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy019.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy020.jpg" alt="" />
+<img src="../../dummyimage/300x300/dummy021.jpg" alt="" />
+</div>
 </body>
 </html>

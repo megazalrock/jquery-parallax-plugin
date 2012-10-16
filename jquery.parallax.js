@@ -12,7 +12,8 @@
 				var _para = this;
 				if(_para._g.o.useLoadprogress){
 					$.loadprogress({
-						bodyOverflowFixTo:false
+						bodyOverflowFixTo:false,
+						manualMode:true
 					});
 					var loaded = 0;
 					$(window)
@@ -23,7 +24,7 @@
 									fnc.call();
 								},1);
 							}
-						});
+						})
 				}else{
 					fnc.call()
 				}
@@ -36,8 +37,9 @@
 					onScroll:undefined,
 					keyScrollAmount:20,
 					scrollRate:0.8,
-					startPosAutoOffset:100,
+					startPosAutoOffset:0,
 					endPosAutoOffset:-100,
+					showScrollBar:false,
 					mode:'scroll' //'scroll' or 'page'
 				};
 				$.extend(o,_o);
@@ -45,11 +47,11 @@
 				_para._g['scrollDistance'] = 0;
 
 				this.progress(function(){
-					_para._g.scrollDistance = Math.max($('html')[0].scrollTop,$('body')[0].scrollTop);
+					_para._g.scrollDistance = $('html')[0].scrollTop || $('body')[0].scrollTop;
 					_para._g['bodyHeight'] = $('body').height();
 
 					function onWheel(e){
-						console.log(e);
+						e = e || window.event;
 						var delta = e.detail || -e.wheelDelta;
 						//delta = (delta > 0)? 1 : (delta < 0)? -1 : 0;
 						addScrollDistance(delta * o.scrollRate);
@@ -61,13 +63,17 @@
 							return false;
 						}
 					}
-					if(window.addEventListener){
-						window.addEventListener('DOMMouseScroll', onWheel, false);
+					if(!o.showScrollBar){
+						$('body').css('overflow','hidden');
+						if(window.addEventListener){
+							window.addEventListener('DOMMouseScroll', onWheel, false);
+						}
+						window.onmousewheel = document.onmousewheel = onWheel;
+					}else{
+						$(window).scroll(function(){
+							_para.doAnimate(_para._g.scrollDistance);
+						});
 					}
-					window.onmousewheel = document.onmousewheel = onWheel;
-
-					$('body').css('overflow','hidden');
-					_para.doAnimate(_para._g.scrollDistance);
 					
 					$(document)
 						.on('keydown',function(e){
@@ -98,25 +104,37 @@
 					}
 					
 				});//this.progress(function(){ end
-				
+			},
+			start:function(){
+				var _para = this;
+				if(_para._g.o.useLoadprogress){
+					$(window).one('loadprogressEnd',function(){
+						_para.doAnimate(_para._g.scrollDistance);
+						$(this).trigger('loadprogressManualEnd');
+					});
+				}else{
+					setTimeout(function(){
+						_para.doAnimate(_para._g.scrollDistance);
+					},1);
+				}
 			},
 			doAnimate:function(d){
-				$('#scrollDistance').val(d);
-				$('body')[0].scrollTop = d;
-				$('html')[0].scrollTop = d;
+				d = d || $('html')[0].scrollTop || $('body')[0].scrollTop;
 				var _para = this;
+				if(!_para._g.o.showScrollBar){
+					$('body')[0].scrollTop = $('html')[0].scrollTop  = d;
+				}
 				if($.isFunction(_para._g.o.onScroll)){
 					_para._g.o.onScroll.call();
 				}
-
 				for(var i=0; this.list[i]; i+=1){
 					var $_target = $(this.list[i]);
 					var p = $_target.data('_param');
-					if(p.start > d){
+					if(p.start >= d){
 						$_target
 							.stop(true,true)
 							.css(p.startProp);
-					}else if(p.end < d){
+					}else if(p.end <= d){
 						$_target
 						.stop(true,true)
 						.css(p.endProp);
@@ -131,8 +149,8 @@
 						});
 						$_target.css(prop);
 					}
-					
 				}
+				_para._g.scrollDistance = d;
 			},
 			_g:{},
 			list:[]
@@ -175,7 +193,11 @@
 			}
 			$.each(p.startProp,function(key){
 				if(p.endProp[key] === undefined){
-					p.endProp[key] = parseFloat($_target.css(key));
+					if($_target.css(key) === 'auto' && key.indexOf('margin') !== -1){
+						p.endProp[key] = 0;
+					}else{
+						p.endProp[key] = parseFloat($_target.css(key));
+					}
 				}
 				if(typeof p.startProp[key] === 'string'){
 					$_target.css(key,p.startProp[key]);
@@ -184,7 +206,11 @@
 			});
 			$.each(p.endProp,function(key){
 				if(p.startProp[key] === undefined){
-					p.startProp[key] = parseFloat($_target.css(key));
+					if($_target.css(key) === 'auto' && key.indexOf('margin') !== -1){
+						p.startProp[key] = 0;
+					}else{
+						p.startProp[key] = parseFloat($_target.css(key));
+					}
 				}
 				if(typeof p.endProp[key] === 'string'){
 					$_target.css(key,p.endProp[key]);
@@ -195,7 +221,6 @@
 			return this;
 		}
 	});
-	
 	/*
 	 * jQuery Easing v1.3 - http://gsgd.co.uk/sandbox/jquery/easing/
 	 *
