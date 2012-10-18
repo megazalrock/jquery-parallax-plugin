@@ -9,29 +9,80 @@
 	.box{
 		width:90%;
 		border:1px solid #CCC;
+		overflow:hidden;
 	}
 </style>
 <script type="text/javascript" src="../../js/jquery-1.8.2.js"></script>
-<script type="text/javascript" src="../../jquery-loadprogress-plugin/jquery.loadprogress.js"></script>
+<script type="text/javascript" src="../../js/jQueryPlugins/jquery.easing.1.3.js"></script>
+<script type="text/javascript" src="../../jquery-loadprogress-plugin/jquery.loadprogress.min.js"></script>
 <script type="text/javascript" src="../jquery.parallax.js"></script>
 <script type="text/javascript">
 $(function(){
 	$.parallax.init({
 		useLoadprogress:true,
-		showScrollBar:false
+		showScrollBar:false,
+		onScroll:function(){
+			console.log($.parallax._g.scrollDistance);
+		}
 	});
+	
 	$('body > div.box')
 		.eq(0)
 			.paraAnimate({
 				start:-100,
 				end:800,
 				endProp:{
-					marginTop:900,
-					opacity:0
+					height:900,
 				},
 				easing:'linear'
 			})
 		.end()
+		.eq(1)
+			.css('background-color','#eee')
+			.paraAnimate({
+				start:0,
+				end:900,
+				endProp:{
+					width:200
+				}
+			})
+		.end()
+		.eq(2)
+			.paraAnimate({
+				start:50,
+				end:1000,
+				endProp:{
+					opacity:0.5
+				}
+			})
+		.end()
+		.eq(3)
+			.paraAnimate({
+				start:50,
+				end:1000,
+				endProp:{
+					marginLeft:300
+				},
+				easing:'easeOutBack'
+			})
+		.end()
+		.eq(4)
+			.paraAnimate({
+				start:'auto+500',
+				end:'auto+500',
+				startProp:{
+					padding:100
+				},
+				easing:'easeInOutBounce'
+			})
+		.end()
+		.eq(5)
+			.paraAnimate({
+				startProp:{
+					marginLeft:2000
+				}
+			})
+		
 	$.parallax.start();
 	
 });
@@ -75,6 +126,11 @@ $(function(){
 				easing:'easeOutBounce'
 			});
 	</pre>
+</div>
+<div class="box">
+	<p>最後に</p>
+	<pre>$.parallax.start();</pre>
+	を呼び出します。
 </div>
 <div class="box">
 	<p>たったこれだけでアニメーションさせることができます！</p>
